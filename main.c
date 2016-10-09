@@ -5,7 +5,10 @@
 #include <sys/types.h>  
 #include <sys/stat.h>  
 #include <errno.h>  
-#include <string.h>  
+#include <string.h>
+#include "cJSON.h"
+extern char *itoa(int num,char *str,int radix);
+
 #define BUFFER_SIZE 1024  
 #define print(format, ...) \
 	{ \
@@ -14,10 +17,69 @@
 		printf(format, ##__VA_ARGS__); \
 	}
 
+int cjson_music_node_init(cJSON **root)
+{
+	*root=cJSON_CreateObject();
+	return 0;
+}
+
+int cjson_music_node_delete(cJSON **root)
+{
+	 cJSON_Delete(*root);
+	 return 0;
+}
+
+int cjson_music_node_print(cJSON *root)
+{
+	int retvalue = 1;
+	if (root == NULL) {
+		retvalue = -1;
+		goto end;
+	}
+	char *s = cJSON_Print(root);
+	printf("%s\n", s);
+	free(s);
+end:
+	return retvalue;
+}
+
+int cjson_music_node_join(int num, cJSON * root, char *title, char *artist, char *url)
+{
+	int retvalue = 1;
+	if ((title == NULL) | (artist == NULL) | (url == NULL) |
+		(root == NULL)) {
+		retvalue = -1;
+		goto end;
+	}
+
+	cJSON *fmt;
+	char str[25] = {0};
+	itoa(num, str, 10);
+	cJSON_AddItemToObject(root, str, fmt=cJSON_CreateObject());
+	cJSON_AddStringToObject(fmt, "title", title);
+	cJSON_AddStringToObject(fmt, "artist", artist);
+	cJSON_AddStringToObject(fmt, "url", url);
+end:
+	return retvalue;
+}
+
+int cjson_op_test()
+{
+	int i;
+	cJSON *root;
+	cjson_music_node_init(&root);
+	for (i = 0; i < 1000; i++) {
+		cjson_music_node_join(i, root, "a", "b", "c");
+	}
+	cjson_music_node_print(root);
+	cjson_music_node_delete(&root);
+	return 0;
+}
+
 /*return value:  1: file exit
 		-1: file no exit
 */
-int file_exit(const char *filename)
+int file_exist(const char *filename)
 {
 	int retvalue;
 	if (filename == NULL) {
@@ -104,7 +166,7 @@ int main(int argc, char **argv)
 {
 	int retvalue = -1;
 	int fd;
-	int size;
+	cjson_op_test();
 	if (argc != 2) {
 		print("usage: %s file\n", argv[0]);
 		return -1;
