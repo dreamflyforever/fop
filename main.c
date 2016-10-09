@@ -7,6 +7,9 @@
 #include <errno.h>  
 #include <string.h>
 #include "cJSON.h"
+
+#define debug 0
+
 extern char *itoa(int num,char *str,int radix);
 
 #define BUFFER_SIZE 1024  
@@ -29,20 +32,6 @@ int cjson_music_node_delete(cJSON **root)
 	 return 0;
 }
 
-int cjson_music_node_print(cJSON *root)
-{
-	int retvalue = 1;
-	if (root == NULL) {
-		retvalue = -1;
-		goto end;
-	}
-	char *s = cJSON_Print(root);
-	printf("%s\n", s);
-	free(s);
-end:
-	return retvalue;
-}
-
 int cjson_music_node_join(int num, cJSON * root, char *title, char *artist, char *url)
 {
 	int retvalue = 1;
@@ -61,19 +50,6 @@ int cjson_music_node_join(int num, cJSON * root, char *title, char *artist, char
 	cJSON_AddStringToObject(fmt, "url", url);
 end:
 	return retvalue;
-}
-
-int cjson_op_test()
-{
-	int i;
-	cJSON *root;
-	cjson_music_node_init(&root);
-	for (i = 0; i < 1000; i++) {
-		cjson_music_node_join(i, root, "a", "b", "c");
-	}
-	cjson_music_node_print(root);
-	cjson_music_node_delete(&root);
-	return 0;
 }
 
 /*return value:  1: file exit
@@ -116,10 +92,9 @@ end:
   notice: everytimes call this function will from the file starting position to
   write.
 */
-int file_write(int fd, char *content)
+int file_write(int fd, char *content, int size)
 {
 	int retvalue = 1;
-	int size;
 	if ((content == NULL) | (fd <= 0)) {
 		print("error\n\n");
 		retvalue = -1;
@@ -128,7 +103,7 @@ int file_write(int fd, char *content)
 
 	/*make sure from the starting position to write*/
 	lseek(fd, 0, SEEK_SET);
-	size = write(fd, content, strlen(content));
+	size = write(fd, content, size);
 	if (size <= 0) {
 		print("write error\n");
 		retvalue = -1;
@@ -162,11 +137,43 @@ end:
 	return retvalue;
 }
 
+int cjson_music_node_print(int fd, cJSON *root)
+{
+	int retvalue = 1;
+	int len;
+	if (root == NULL) {
+		retvalue = -1;
+		goto end;
+	}
+	char *s = cJSON_Print(root);
+#if debug
+	printf("%s\n", s);
+#endif
+	len = strlen(s);
+	file_write(fd, s, len);
+	free(s);
+end:
+	return retvalue;
+}
+
+int cjson_op_test(int fd)
+{
+	int i;
+	cJSON *root;
+	cjson_music_node_init(&root);
+	for (i = 0; i < 1000; i++) {
+		cjson_music_node_join(i, root, "a", "b", "c");
+	}
+	cjson_music_node_print(fd, root);
+	cjson_music_node_delete(&root);
+	return 0;
+}
+
+
 int main(int argc, char **argv)
 {
 	int retvalue = -1;
 	int fd;
-	cjson_op_test();
 	if (argc != 2) {
 		print("usage: %s file\n", argv[0]);
 		return -1;
@@ -176,11 +183,14 @@ int main(int argc, char **argv)
 		retvalue = -1;
 		goto end;
 	}
-	file_write(fd, "hell world, my friend\n");
+	cjson_op_test(fd);
+
+#if debug
 	lseek(fd, 0, SEEK_SET);
-	char buf[2048] = {0};
-	file_read(fd, buf, 2048);
+	char buf[1024 * 100] = {0};
+	file_read(fd, buf, 1024 * 100);
 	printf("%s", buf);
+#endif
 end:
 	return retvalue;
 }
