@@ -7,6 +7,7 @@
 #include <errno.h>  
 #include <string.h>
 #include "cJSON.h"
+#include "fop.h"
 
 #define debug 0
 typedef void (*func)(void **obj, char *a, char *b, char *c);
@@ -61,91 +62,6 @@ end:
 	return retvalue;
 }
 
-/*return value:  1: file exit
-		-1: file no exit
-*/
-int file_exist(const char *filename)
-{
-	int retvalue;
-	if (filename == NULL) {
-		retvalue = -1;
-		goto end;
-	}
-	/*judge file is read and write or no*/
-	if (0 == access(filename, 2 | 4))
-		retvalue = 1;
-	else
-		retvalue = -1;
-end:
-	return retvalue;
-}
-
-int file_create(const char *filename)
-{
-	int retvalue = -1;
-	int fd = -1;
-	if (filename == NULL) {
-		retvalue = -1;
-		goto end;
-	}
-	fd = open(filename, O_CREAT | O_RDWR, S_IRWXU | S_IRWXO | S_IRWXG);
-	if (fd > 0)
-		retvalue = fd;
-	else
-		retvalue = -1;
-end:
-	return retvalue;
-}
-
-/*
-  notice: everytimes call this function will from the file starting position to
-  write.
-*/
-int file_write(int fd, char *content, int size)
-{
-	int retvalue = 1;
-	if ((content == NULL) | (fd <= 0)) {
-		print("error\n\n");
-		retvalue = -1;
-		goto end;
-	}
-
-	/*make sure from the starting position to write*/
-	lseek(fd, 0, SEEK_SET);
-	size = write(fd, content, size);
-	if (size <= 0) {
-		print("write error\n");
-		retvalue = -1;
-		goto end;
-	}
-end:
-	return retvalue;
-}
-
-/*
-  notice: everytimes call this function will from the file starting position to
-  read.
-*/
-int file_read(int fd, char *buf, int size)
-{
-	int retvalue = 1;
-	if ((buf == NULL) | (fd <= 0) | (size <= 0)) {
-		print("error\n\n");
-		retvalue = -1;
-		goto end;
-	}
-	/*make sure from the starting position to read*/
-	lseek(fd, 0, SEEK_SET);
-	size = read(fd, buf, size);
-	if (size <= 0) {
-		print("read error\n");
-		retvalue = -1;
-		goto end;
-	}
-end:
-	return retvalue;
-}
-
 int cjson_music_node_print(int fd, cJSON *root)
 {
 	int retvalue = 1;
@@ -166,7 +82,7 @@ end:
 }
 
 /*music insert operation should be must after this function*/
-int parse_cjson_output(char *buf, int key, func output,
+int parse_cjson_high_output(char *buf, int key, func output,
 		void **obj)
 {
 	int retvalue = 1;
@@ -249,7 +165,7 @@ int main(int argc, char **argv)
 	//printf("%s", buf);
 	int i;
 	for (i = 0; i < 1000; i++) {
-		parse_cjson_output(buf, i, music_list_output, NULL);
+		parse_cjson_high_output(buf, i, music_list_output, NULL);
 		//music_list_insert(node);
 	}
 #endif
