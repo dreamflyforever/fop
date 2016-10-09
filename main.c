@@ -9,7 +9,7 @@
 #include "cJSON.h"
 
 #define debug 0
-
+typedef void (*func)(void **obj, char *a, char *b, char *c);
 extern char *itoa(int num,char *str,int radix);
 
 #define BUFFER_SIZE 1024  
@@ -19,6 +19,15 @@ extern char *itoa(int num,char *str,int radix);
 		__FILE__, __func__, __LINE__); \
 		printf(format, ##__VA_ARGS__); \
 	}
+
+void music_list_output(void **obj, char *a, char *b, char *c)
+{
+	if ((a == NULL) || (b == NULL) || (c == NULL)) {
+		print("a || b || c = 0\n");
+		return ;
+	}
+	print("%s %s %s\n", a, b, c);
+}
 
 int cjson_music_node_init(cJSON **root)
 {
@@ -156,19 +165,68 @@ end:
 	return retvalue;
 }
 
-int cjson_op_test(int fd)
+/*music insert operation should be must after this function*/
+int parse_cjson_output(char *buf, int key, func output,
+		void **obj)
+{
+	int retvalue = 1;
+	if (buf == NULL) {
+		retvalue = -1;
+		goto end;
+	}
+
+	char str[25] = {0};
+	itoa(key, str, 10);
+	cJSON *root = cJSON_Parse(buf);
+	cJSON *music = cJSON_GetObjectItem(root, str);
+	if (music == NULL) {
+		retvalue = -1;
+#if debug
+		print("key is no in json\n");
+#endif
+		goto end;
+	}
+
+	char *title = cJSON_GetObjectItem(music, "title")->valuestring;
+	char *artist = cJSON_GetObjectItem(music, "artist")->valuestring;
+	char *url = cJSON_GetObjectItem(music, "url")->valuestring;
+	if ((NULL == title) || (NULL == artist) || (NULL == url)) {
+		retvalue = -1;
+		print("key is no in json\n");
+		goto end;
+	}
+	output(obj, title, artist, url);
+	print("%s %s %s\n", title, artist, url);
+	free(title);
+	free(artist);
+	free(url);
+end:
+	return retvalue;
+}
+
+int parse_cjson_input()
+{
+	int retvalue = -1;
+	return retvalue;
+}
+
+int cjson_write_file_test(int fd)
 {
 	int i;
 	cJSON *root;
 	cjson_music_node_init(&root);
 	for (i = 0; i < 1000; i++) {
-		cjson_music_node_join(i, root, "a", "b", "c");
+		;
+		//cjson_music_node_join(i, root, "a", "b", "c");
 	}
+	cjson_music_node_join(0, root, "a", "b", "c");
+	cjson_music_node_join(1, root, "d", "e", "f");
+	cjson_music_node_join(2, root, "g", "h", "i");
+	cjson_music_node_join(3, root, "j", "k", "l");
 	cjson_music_node_print(fd, root);
 	cjson_music_node_delete(&root);
 	return 0;
 }
-
 
 int main(int argc, char **argv)
 {
@@ -183,13 +241,17 @@ int main(int argc, char **argv)
 		retvalue = -1;
 		goto end;
 	}
-	cjson_op_test(fd);
+	cjson_write_file_test(fd);
 
-#if debug
-	lseek(fd, 0, SEEK_SET);
+#if 1
 	char buf[1024 * 100] = {0};
 	file_read(fd, buf, 1024 * 100);
-	printf("%s", buf);
+	//printf("%s", buf);
+	int i;
+	for (i = 0; i < 1000; i++) {
+		parse_cjson_output(buf, i, music_list_output, NULL);
+		//music_list_insert(node);
+	}
 #endif
 end:
 	return retvalue;
