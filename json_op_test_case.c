@@ -25,7 +25,7 @@ int high_output_cb(char *a, char *b, char *c)
 		retvalue = -1;
 		goto end;
 	}
-	print("[a:b:c] [%s : %s : %s]", a, b, c);
+	print("[a:b:c] [%s : %s : %s]\n", a, b, c);
 end:
 	return retvalue;
 }
@@ -54,8 +54,13 @@ int op_high_input_func(struct op *o)
 {
 	int i;
 	int retvalue = 1;
+	if (o == NULL) {
+		print("error\n");
+		retvalue = -1;
+		goto end;
+	}
 	char str[3] = {0};
-	for (i = 0; i < 20; i++) {
+	for (i = 0; i < 2000; i++) {
 		itoa(i, str, 10);
 		retvalue = op_high_input(i, o, str, "b", str);
 		if (retvalue == -1) {
@@ -76,7 +81,7 @@ int main()
 
 	op_low_input(o);
 	int i;
-	for (i = 0; i < 100; i++)
+	for (i = 0; i < 2000; i++)
 		op_high_output(o, i);
 
 	op_high_input_func(o);
