@@ -53,9 +53,7 @@ int low_input_cb(int arg, char *s, int size)
 {
 	int retvalue = 1;
 
-	print("\n");
 	size = file_read(arg, s, size);
-	print("\n");
 	if (size == -1) {
 		retvalue = -1;
 		goto end;
