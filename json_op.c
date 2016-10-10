@@ -13,6 +13,7 @@ int op_reg_low_output(struct op *o, int (*low_output)
 {
 	int retvalue = 1;
 	if (o == NULL) {
+		print("error\n");
 		retvalue = -1;
 		goto end;
 	}
@@ -28,6 +29,7 @@ int op_reg_high_output(struct op *o, int (*high_output)
 {
 	int retvalue = 1;
 	if (o == NULL) {
+		print("error\n");
 		retvalue = -1;
 		goto end;
 	}
@@ -43,6 +45,7 @@ int op_reg_low_input(struct op *o, int (*low_input)
 {
 	int retvalue = 1;
 	if (o == NULL) {
+		print("error\n");
 		retvalue = -1;
 		goto end;
 	}
@@ -89,6 +92,7 @@ int op_high_input(int num, struct op *o, char *title, char *artist, char *url)
 	int retvalue = 1;
 	if ((title == NULL) | (artist == NULL) | (url == NULL) |
 		(o->root == NULL)) {
+		print("error\n");
 		retvalue = -1;
 		goto end;
 	}
@@ -109,6 +113,7 @@ int op_low_output(struct op *o)
 	int retvalue = 1;
 	int len;
 	if ((o == NULL) || (o->root == NULL)) {
+		print("error\n");
 		retvalue = -1;
 		goto end;
 	}
@@ -116,7 +121,7 @@ int op_low_output(struct op *o)
 	if (o->low_output == NULL) {
 		retvalue = -1;
 		print("please implement callback use funciton"
-			"op_reg_low_output\n");
+			" op_reg_low_output\n");
 		goto end;
 	}
 
@@ -136,6 +141,7 @@ int op_high_output(struct op *o, int key)
 {
 	int retvalue = 1;
 	int size;
+
 	if ((o->buf == NULL) || (o == NULL)) {
 		retvalue = -1;
 		print("\n");
@@ -145,7 +151,7 @@ int op_high_output(struct op *o, int key)
 	if (o->high_output == NULL) {
 		retvalue = -1;
 		print("please implement callback use funciton"
-			"op_reg_high_output\n");
+			" op_reg_high_output\n");
 		goto end;
 	}
 
@@ -200,7 +206,7 @@ int op_low_input(struct op *obj)
 	if (obj->low_input == NULL) {
 		retvalue = -1;
 		print("please implement callback use funciton"
-			"op_reg_low_input\n");
+			" op_reg_low_input\n");
 		goto end;
 	}
 
