@@ -1,10 +1,5 @@
 #include <stdlib.h>
-#include <unistd.h>  
-#include <fcntl.h>  
 #include <stdio.h>  
-#include <sys/types.h>  
-#include <sys/stat.h>  
-#include <errno.h>  
 #include <string.h>
 #include "cJSON.h"
 #include "fop.h"
@@ -25,7 +20,6 @@ int node_get(struct op *o)
 end:
 	return retvalue;
 }
-
 
 /*user callback*/
 int low_output_cb(int arg, char *s, int size)
@@ -78,6 +72,7 @@ int main(int argc, char **argv)
 		print("usage: %s file\n", argv[0]);
 		return -1;
 	}
+
 	fd = file_create(argv[1]);
 	if (fd == -1) {
 		retvalue = -1;

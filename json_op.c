@@ -1,13 +1,7 @@
 #include <stdlib.h>
-#include <unistd.h>  
-#include <fcntl.h>  
 #include <stdio.h>  
-#include <sys/types.h>  
-#include <sys/stat.h>  
-#include <errno.h>  
 #include <string.h>
 #include "cJSON.h"
-#include "fop.h"
 #include "json_op.h"
 
 #define debug 0
@@ -177,19 +171,14 @@ end:
 	return retvalue;
 }
 
-int parse_cjson_input()
-{
-	int retvalue = -1;
-	return retvalue;
-}
-
 int op_low_input(struct op *obj)
 {
 	int retvalue = 1;
-	if (obj == NULL) {
+	if ((obj == NULL) || (obj->buf == NULL)) {
 		retvalue = -1;
 		goto end;
 	}
+
 	memset(obj->buf, 0, BUF_SIZE);
 	retvalue = obj->low_input(obj->arg, obj->buf, BUF_SIZE);
 end:
