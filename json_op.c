@@ -69,6 +69,9 @@ int op_init(struct op **obj, int arg)
 	}
 
 	(*obj)->arg = arg;
+	(*obj)->low_output = NULL;
+	(*obj)->high_output = NULL;
+	(*obj)->low_input = NULL;
 
 end:
 	return retvalue;
@@ -109,11 +112,19 @@ int op_low_output(struct op *o)
 		retvalue = -1;
 		goto end;
 	}
+
+	if (o->low_output == NULL) {
+		retvalue = -1;
+		print("please implement callback use funciton"
+			"op_reg_low_output\n");
+		goto end;
+	}
+
 	char *s = cJSON_Print(o->root);
 #if debug
 	printf("%s\n", s);
 #endif
-	len = strlen(s);
+		len = strlen(s);
 	o->low_output(o->arg, s, len);
 	free(s);
 end:
@@ -130,6 +141,14 @@ int op_high_output(struct op *o, int key)
 		print("\n");
 		goto end;
 	}
+
+	if (o->high_output == NULL) {
+		retvalue = -1;
+		print("please implement callback use funciton"
+			"op_reg_high_output\n");
+		goto end;
+	}
+
 	size = strlen(o->buf);
 	if (size == 0) {
 		retvalue = -1;
@@ -139,7 +158,6 @@ int op_high_output(struct op *o, int key)
 
 	char str[25] = {0};
 	itoa(key, str, 10);
-	print("\n");
 	cJSON *root = cJSON_Parse(o->buf);
 	if (root == NULL) {
 		print("json format buf error, maybe increase BUF_SIZE\n");
@@ -176,6 +194,13 @@ int op_low_input(struct op *obj)
 	int retvalue = 1;
 	if ((obj == NULL) || (obj->buf == NULL)) {
 		retvalue = -1;
+		goto end;
+	}
+
+	if (obj->low_input == NULL) {
+		retvalue = -1;
+		print("please implement callback use funciton"
+			"op_reg_low_input\n");
 		goto end;
 	}
 

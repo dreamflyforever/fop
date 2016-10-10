@@ -11,7 +11,8 @@ extern char *itoa(int num,char *str,int radix);
 		printf(format, ##__VA_ARGS__); \
 	}
 
-#define BUF_SIZE 1024 * 100
+#define BUF_SIZE 1024 * 4
+
 struct op {
 	int arg;
 	cJSON *root;
