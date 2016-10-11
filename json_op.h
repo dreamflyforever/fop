@@ -46,5 +46,6 @@ int op_low_output(struct op *obj);
 int op_high_input(int num, struct op *obj, char *title, char *artist, char *url);
 int op_low_input(struct op *obj);
 int op_delete(struct op **obj);
+int op_arg_get(struct op *obj);
 
 #endif

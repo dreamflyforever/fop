@@ -60,7 +60,7 @@ int file_read(int fd, char *buf, int size)
 	lseek(fd, 0, SEEK_SET);
 	size = read(fd, buf, size);
 	if (size <= 0) {
-		print("read error\n");
+		print("read 0\n");
 		retvalue = -1;
 		goto end;
 	}

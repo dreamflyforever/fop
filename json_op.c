@@ -6,6 +6,16 @@
 
 #define debug 0
 
+int op_arg_get(struct op *o)
+{
+	if (o == NULL) {
+		print("error\n");
+		exit(0);
+	}
+
+	return o->arg? o->arg : -1;
+}
+
 int op_reg_low_output(struct op *o, int (*low_output)
 					(int arg,
 					char *s,
