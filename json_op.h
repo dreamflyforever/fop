@@ -1,5 +1,6 @@
 #ifndef _json_op_h_
 #define _json_op_h_
+#include "cJSON.h"
 
 typedef void (*func)(void **obj, char *a, char *b, char *c);
 extern char *itoa(int num,char *str,int radix);
