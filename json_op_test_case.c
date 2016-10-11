@@ -18,7 +18,7 @@ end:
 	return retvalue;
 }
 
-int high_output_cb(char *a, char *b, char *c)
+int high_output_cb(void *contex, char *a, char *b, char *c)
 {
 	int retvalue = 1;
 	if ((a== NULL) || (b == NULL) || (c == NULL)) {
@@ -74,7 +74,7 @@ end:
 int main()
 {
 	struct op *o;
-	op_init(&o, 0);
+	op_init(&o, 0, NULL);
 	op_reg_low_output(o, low_output_cb);
 	op_reg_high_output(o, high_output_cb);
 	op_reg_low_input(o, low_input_cb);

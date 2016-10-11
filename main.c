@@ -36,7 +36,7 @@ end:
 }
 
 /*user callback*/
-int high_output_cb(char *a, char *b, char *c)
+int high_output_cb(void *contex, char *a, char *b, char *c)
 {
 	int retvalue = 1;
 	if ((a == NULL) || (b == NULL) || (c == NULL)) {
@@ -78,7 +78,7 @@ int main(int argc, char **argv)
 	}
 
 	struct op *o_obj;
-	op_init(&o_obj, fd);
+	op_init(&o_obj, fd, NULL);
 	op_reg_low_output(o_obj, low_output_cb);
 	op_reg_high_output(o_obj, high_output_cb);
 	op_reg_low_input(o_obj, low_input_cb);

@@ -23,7 +23,8 @@ end:
 }
 
 int op_reg_high_output(struct op *o, int (*high_output)
-					(char *a,
+					(void *context,
+					char *a,
 					char *b,
 					char *c))
 {
@@ -54,7 +55,7 @@ end:
 	return retvalue;
 }
 
-int op_init(struct op **obj, int arg)
+int op_init(struct op **obj, int arg, void *context)
 {
 	int retvalue = 1;
 	*obj = (struct op *)malloc(sizeof(struct op));
@@ -70,7 +71,7 @@ int op_init(struct op **obj, int arg)
 		retvalue = -1;
 		goto end;
 	}
-
+	(*obj)->context = context;
 	(*obj)->arg = arg;
 	(*obj)->low_output = NULL;
 	(*obj)->high_output = NULL;
@@ -187,7 +188,7 @@ int op_high_output(struct op *o, int key)
 		print("key is no in json\n");
 		goto end;
 	}
-	o->high_output(title, artist, url);
+	o->high_output(o->context, title, artist, url);
 
 end_free:
 	cJSON_Delete(root);

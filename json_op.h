@@ -16,10 +16,11 @@ extern char *itoa(int num,char *str,int radix);
 
 struct op {
 	int arg;
+	void *context;
 	cJSON *root;
 	char buf[BUF_SIZE];
 	int (*low_output)(int arg, char *s, int size);
-	int (*high_output)(char *a, char *b, char *c);
+	int (*high_output)(void *context, char *a, char *b, char *c);
 	int (*low_input)(int arg, char *s, int size);
 };
 
@@ -29,7 +30,8 @@ int op_reg_low_output(struct op *o, int (*low_output)
 					int size));
 
 int op_reg_high_output(struct op *o, int (*high_output)
-					(char *a,
+					(void *context,
+					char *a,
 					char *b,
 					char *c));
 
@@ -38,7 +40,7 @@ int op_reg_low_input(struct op *o, int (*low_input)
 					char *s,
 					int size));
 
-int op_init(struct op **obj, int arg);
+int op_init(struct op **obj, int arg, void *context);
 int op_high_output(struct op *obj, int key);
 int op_low_output(struct op *obj);
 int op_high_input(int num, struct op *obj, char *title, char *artist, char *url);
