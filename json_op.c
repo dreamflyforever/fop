@@ -32,6 +32,23 @@ end:
 	return retvalue;
 }
 
+int op_reg_cur_output(struct op *o, int (*cur_output)
+					(void *context,
+					char *a,
+					char *b,
+					char *c))
+{
+	int retvalue = 1;
+	if (o == NULL) {
+		print("error\n");
+		retvalue = -1;
+		goto end;
+	}
+	o->cur_output = cur_output;
+end:
+	return retvalue;
+}
+
 int op_reg_high_output(struct op *o, int (*high_output)
 					(void *context,
 					char *a,
@@ -159,10 +176,10 @@ int op_high_output(struct op *o, int key)
 		goto end;
 	}
 
-	if (o->high_output == NULL) {
+	if (o->cur_output == NULL) {
 		retvalue = -1;
 		print("please implement callback use funciton"
-			" op_reg_high_output\n");
+			" op_reg_cur_output\n");
 		goto end;
 	}
 
@@ -196,10 +213,20 @@ int op_high_output(struct op *o, int key)
 	if ((NULL == title) || (NULL == artist) || (NULL == url)) {
 		retvalue = -1;
 		print("key is no in json\n");
-		goto end;
+		goto end_free;
 	}
-	o->high_output(o->context, title, artist, url);
-
+	/*XXX:*/
+	if (key == 10000) {
+		if (o->high_output == NULL) {
+			retvalue = -1;
+			print("please implement callback use funciton"
+				" op_reg_high_output\n");
+			goto end;
+		}
+		o->cur_output(o->context, title, artist, url);
+	} else {
+		o->high_output(o->context, title, artist, url);
+	}
 end_free:
 	cJSON_Delete(root);
 end:

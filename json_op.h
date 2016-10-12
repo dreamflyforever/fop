@@ -21,6 +21,7 @@ struct op {
 	char buf[BUF_SIZE];
 	int (*low_output)(int arg, char *s, int size);
 	int (*high_output)(void *context, char *a, char *b, char *c);
+	int (*cur_output)(void *context, char *a, char *b, char *c);
 	int (*low_input)(int arg, char *s, int size);
 };
 
