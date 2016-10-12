@@ -36,6 +36,13 @@ int op_reg_high_output(struct op *o, int (*high_output)
 					char *b,
 					char *c));
 
+int op_reg_cur_output(struct op *o, int (*high_output)
+					(void *context,
+					char *a,
+					char *b,
+					char *c));
+
+
 int op_reg_low_input(struct op *o, int (*low_input)
 					(int arg,
 					char *s,
@@ -48,5 +55,6 @@ int op_high_input(int num, struct op *obj, char *title, char *artist, char *url)
 int op_low_input(struct op *obj);
 int op_delete(struct op **obj);
 int op_arg_get(struct op *obj);
+void *op_context_get(struct op *o);
 
 #endif

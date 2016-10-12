@@ -6,6 +6,17 @@
 
 #define debug 0
 
+void *op_context_get(struct op *o)
+{
+	if (o == NULL) {
+		print("error\n");
+		exit(0);
+	}
+
+	return o->context? o->context : NULL;
+
+}
+
 int op_arg_get(struct op *o)
 {
 	if (o == NULL) {
@@ -176,13 +187,6 @@ int op_high_output(struct op *o, int key)
 		goto end;
 	}
 
-	if (o->cur_output == NULL) {
-		retvalue = -1;
-		print("please implement callback use funciton"
-			" op_reg_cur_output\n");
-		goto end;
-	}
-
 	size = strlen(o->buf);
 	if (size == 0) {
 		retvalue = -1;
@@ -202,7 +206,7 @@ int op_high_output(struct op *o, int key)
 	if (music == NULL) {
 		retvalue = -1;
 #if debug
-		print("key is no in json\n");
+		print("key:%d is no in json\n", key);
 #endif
 		goto end_free;
 	}
@@ -217,14 +221,21 @@ int op_high_output(struct op *o, int key)
 	}
 	/*XXX:*/
 	if (key == 10000) {
-		if (o->high_output == NULL) {
+		if (o->cur_output == NULL) {
 			retvalue = -1;
 			print("please implement callback use funciton"
-				" op_reg_high_output\n");
+				" op_reg_cur_output\n");
 			goto end;
 		}
 		o->cur_output(o->context, title, artist, url);
 	} else {
+		if (o->high_output == NULL) {
+			retvalue = -1;
+			print("please implement callback use funciton"
+				" op_reg_high_output\n");
+		goto end;
+		}
+
 		o->high_output(o->context, title, artist, url);
 	}
 end_free:
