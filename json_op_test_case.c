@@ -6,14 +6,14 @@
 #include "cJSON.h"
 #include "json_op.h"
 
-int low_output_cb(int arg, char *s, int size)
+int low_output_cb(void  *arg, char *s, int size)
 {
 	int retvalue = 1;
 	if (s == NULL) {
 		retvalue = -1;
 		goto end;
 	}
-	print("[arg : size : s] [%d : %d : %s]\n", arg, size, s);
+	print("[arg : size : s] [%d : %d : %s]\n", *(int *)arg, size, s);
 end:
 	return retvalue;
 }
@@ -30,7 +30,7 @@ end:
 	return retvalue;
 }
 
-int low_input_cb(int arg, char *s, int size)
+int low_input_cb(void *arg, char *s, int size)
 {
 	int retvalue = 1;
 	if (s == NULL) {
@@ -45,7 +45,7 @@ int low_input_cb(int arg, char *s, int size)
 	}
 	read(fd, s, size);
 
-	print("[arg : size : s] [%d : %d : %s]\n", arg, size, s);
+	print("[arg : size : s] [%d : %d : %s]\n", *(int *)arg, size, s);
 end:
 	return retvalue;
 }

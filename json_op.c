@@ -17,18 +17,18 @@ void *op_context_get(struct op *o)
 
 }
 
-int op_arg_get(struct op *o)
+void *op_arg_get(struct op *o)
 {
 	if (o == NULL) {
 		print("error\n");
 		exit(0);
 	}
 
-	return o->arg? o->arg : -1;
+	return o->arg? o->arg : NULL;
 }
 
 int op_reg_low_output(struct op *o, int (*low_output)
-					(int arg,
+					(void *arg,
 					char *s,
 					int size))
 {
@@ -78,7 +78,7 @@ end:
 }
 
 int op_reg_low_input(struct op *o, int (*low_input)
-					(int arg,
+					(void *arg,
 					char *s,
 					int size))
 {
@@ -93,7 +93,7 @@ end:
 	return retvalue;
 }
 
-int op_init(struct op **obj, int arg, void *context)
+int op_init(struct op **obj, void *arg, void *context)
 {
 	int retvalue = 1;
 	*obj = (struct op *)malloc(sizeof(struct op));

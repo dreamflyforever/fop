@@ -22,7 +22,7 @@ end:
 }
 
 /*user callback*/
-int low_output_cb(int arg, char *s, int size)
+int low_output_cb(void *arg, char *s, int size)
 {
 	int retvalue = 1;
 	if (s == NULL) {
@@ -49,7 +49,7 @@ end:
 }
 
 /*user callback*/
-int low_input_cb(int arg, char *s, int size)
+int low_input_cb(void *arg, char *s, int size)
 {
 	int retvalue = 1;
 
@@ -78,7 +78,7 @@ int main(int argc, char **argv)
 	}
 
 	struct op *o_obj;
-	op_init(&o_obj, fd, NULL);
+	op_init(&o_obj, &fd, NULL);
 	op_reg_low_output(o_obj, low_output_cb);
 	op_reg_high_output(o_obj, high_output_cb);
 	op_reg_low_input(o_obj, low_input_cb);

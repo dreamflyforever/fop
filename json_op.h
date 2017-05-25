@@ -3,7 +3,7 @@
 #include "cJSON.h"
 
 typedef void (*func)(void **obj, char *a, char *b, char *c);
-extern char *itoa(int num,char *str,int radix);
+extern char *itoa(int num, char *str, int radix);
 
 #define print(format, ...) \
 	{ \
@@ -15,18 +15,18 @@ extern char *itoa(int num,char *str,int radix);
 #define BUF_SIZE 1024 * 4
 
 struct op {
-	int arg;
+	void *arg;
 	void *context;
 	cJSON *root;
 	char buf[BUF_SIZE];
-	int (*low_output)(int arg, char *s, int size);
+	int (*low_output)(void *arg, char *s, int size);
 	int (*high_output)(void *context, char *a, char *b, char *c);
 	int (*cur_output)(void *context, char *a, char *b, char *c);
-	int (*low_input)(int arg, char *s, int size);
+	int (*low_input)(void *arg, char *s, int size);
 };
 
 int op_reg_low_output(struct op *o, int (*low_output)
-					(int arg,
+					(void *arg,
 					char *s,
 					int size));
 
@@ -44,17 +44,17 @@ int op_reg_cur_output(struct op *o, int (*high_output)
 
 
 int op_reg_low_input(struct op *o, int (*low_input)
-					(int arg,
+					(void *arg,
 					char *s,
 					int size));
 
-int op_init(struct op **obj, int arg, void *context);
+int op_init(struct op **obj, void *arg, void *context);
 int op_high_output(struct op *obj, int key);
 int op_low_output(struct op *obj);
 int op_high_input(int num, struct op *obj, char *title, char *artist, char *url);
 int op_low_input(struct op *obj);
 int op_delete(struct op **obj);
-int op_arg_get(struct op *obj);
+void *op_arg_get(struct op *obj);
 void *op_context_get(struct op *o);
 
 #endif

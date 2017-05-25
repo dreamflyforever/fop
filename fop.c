@@ -48,8 +48,9 @@ end:
   notice: everytimes call this function will from the file starting position to
   read.
 */
-int file_read(int fd, char *buf, int size)
+int file_read(void *fd_p, char *buf, int size)
 {
+	int fd = *(int*)fd_p;
 	int retvalue = 1;
 	if ((buf == NULL) | (fd <= 0) | (size <= 0)) {
 		print("error\n\n");
@@ -72,8 +73,9 @@ end:
   notice: everytimes call this function will from the file starting position to
   write.
 */
-int file_write(int fd, char *content, int size)
+int file_write(void *fd_p, char *content, int size)
 {
+	int fd = *(int*)fd_p;
 	int retvalue = 1;
 	if ((content == NULL) | (fd <= 0)) {
 		print("error\n\n");
