@@ -9,7 +9,7 @@
 	}
 
 int file_exist(const char *filename);
-int file_create(const char *filename);
+void *file_create(const char *filename);
 int file_read(void *fd_p, char *buf, int size);
 int file_write(void *fd_p, char *content, int size);
 

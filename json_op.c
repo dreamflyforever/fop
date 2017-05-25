@@ -169,7 +169,7 @@ int op_low_output(struct op *o)
 #if debug
 	printf("%s\n", s);
 #endif
-		len = strlen(s);
+	len = strlen(s);
 	o->low_output(o->arg, s, len);
 	free(s);
 end:

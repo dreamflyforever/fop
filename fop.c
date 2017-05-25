@@ -27,19 +27,19 @@ end:
 	return retvalue;
 }
 
-int file_create(const char *filename)
+void *file_create(const char *filename)
 {
-	int retvalue = -1;
-	int fd = -1;
+	void *retvalue;
+	int fd;
 	if (filename == NULL) {
-		retvalue = -1;
+		retvalue = NULL;
 		goto end;
 	}
 	fd = open(filename, O_CREAT | O_RDWR, S_IRWXU | S_IRWXO | S_IRWXG);
 	if (fd > 0)
-		retvalue = fd;
+		retvalue = &fd;
 	else
-		retvalue = -1;
+		retvalue = NULL;
 end:
 	return retvalue;
 }

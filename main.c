@@ -65,18 +65,19 @@ end:
 int main(int argc, char **argv)
 {
 	int retvalue = -1;
-	int fd;
+	void *fd_p;
 	if (argc != 2) {
 		print("usage: %s file\n", argv[0]);
 		return -1;
 	}
 
-	fd = file_create(argv[1]);
-	if (fd == -1) {
+	fd_p = file_create(argv[1]);
+	if (*(int *)fd_p == -1) {
 		retvalue = -1;
 		goto end;
 	}
-
+	int fd;
+	fd = *(int *)fd_p;
 	struct op *o_obj;
 	op_init(&o_obj, &fd, NULL);
 	op_reg_low_output(o_obj, low_output_cb);
