@@ -182,7 +182,7 @@ int op_high_output(struct op *o, int key)
 	int retvalue = 1;
 	int size;
 
-	if ((o->buf == NULL) || (o == NULL)) {
+	if (o == NULL) {
 		retvalue = -1;
 		print("\n");
 		goto end;
@@ -247,7 +247,7 @@ end:
 int op_low_input(struct op *obj)
 {
 	int retvalue = 1;
-	if ((obj == NULL) || (obj->buf == NULL)) {
+	if (obj == NULL) {
 		retvalue = -1;
 		goto end;
 	}
